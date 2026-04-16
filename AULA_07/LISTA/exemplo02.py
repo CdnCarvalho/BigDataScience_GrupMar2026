@@ -30,8 +30,3 @@ print("Lista Removendo pelo índice:", lista_produtos)
 lista_produtos.clear()
 print(lista_produtos)
 
-
-# Exemplo 02.1 (Replicar no exemplo 01)
-# For sem range()
-for produto in lista_produtos:
-    print(f"Produto: {produto}")

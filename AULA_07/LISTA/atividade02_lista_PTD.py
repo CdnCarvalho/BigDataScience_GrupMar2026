@@ -11,7 +11,7 @@ for i in range(QUANTIDADE_ESTUDANTES):
 # Processando as notas e verificando a média
 for i in range(5):
     media = medias[i]
-    if media >= 7:
+    if media > 7:
         print(f"\nEstudante {i+1}: Média {media} - Aprovado!")
     else:
         print(f"Estudante {i+1}: Média {media} - Reprovado!")
