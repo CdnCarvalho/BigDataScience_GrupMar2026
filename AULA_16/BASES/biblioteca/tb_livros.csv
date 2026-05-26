@@ -1,0 +1,39 @@
+id_livro,titulo,autor,id_genero,isbn,valor_emprestimo
+1,Dom Quixote,Miguel de Cervantes,1,9788476000019,10.0
+2,1984,George Orwell,2,9780451524935,12.5
+3,A Historia das Coisas,Annie Leonard,3,9781451610291,15.0
+4,Critica da Razao Pura,Immanuel Kant,4,9780140447477,20.0
+5,Steve Jobs,Walter Isaacson,5,9781451648546,18.75
+6,O Futuro da Humanidade,Augusto Cury,6,9788576653848,17.5
+7,O Poder do Habito,Charles Duhigg,8,9780812981605,14.0
+8,Flores do Mal,Charles Baudelaire,9,9782070422787,11.25
+9,Harry Potter e a Pedra Filosofal,J.K. Rowling,10,9780590353427,25.0
+10,O Pequeno Principe,Antoine de Saint-Exupery,1,9780156012195,9.5
+11,Brave New World,Aldous Huxley,2,9780060850524,13.75
+12,Sapiens,Yuval Noah Harari,3,9780062316097,16.5
+13,Meditations,Marcus Aurelius,4,9780140449334,22.0
+14,Elon Musk,Ashlee Vance,5,9780062301239,21.0
+15,Inteligencia Artificial,Kai-Fu Lee,6,9781328546395,19.5
+16,Mindset,Carol S. Dweck,8,9780345472328,18.0
+17,Poemas Completos,Fernando Pessoa,9,9789722510006,10.75
+18,O Senhor dos Aneis,J.R.R. Tolkien,10,9780544003415,23.5
+19,Orgulho e Preconceito,Jane Austen,1,9780486284736,12.75
+20,Fahrenheit 451,Ray Bradbury,2,9781451673319,20.5
+22,A Republica,Platao,4,9780679600643,21.75
+23,Churchill,Andrew Roberts,5,9781101980996,24.0
+24,A Inovacao Que Destroi,Clayton Christensen,6,9780062060240,19.25
+25,Como Fazer Amigos e Influenciar Pessoas,Dale Carnegie,8,9780671027032,11.5
+26,O Corvo e Outros Poemas,Edgar Allan Poe,9,9780451531056,15.5
+27,O Hobbit,J.R.R. Tolkien,10,9780547928227,26.0
+28,Jane Eyre,Charlotte Bronte,1,9780141441146,13.25
+29,Neuromancer,William Gibson,2,9780441569595,14.75
+30,O Dilema da Inovacao,Clayton Christensen,6,9780062060240,22.5
+31,A Revolucao dos Bichos,George Orwell,2,9780451526342,17.75
+32,Em Busca de Sentido,Viktor E. Frankl,7,9780807014295,16.25
+33,Desperte Seu Heroi Interior,M. J. Ryan,8,9780451491463,12.0
+34,A Divina Comedia,Dante Alighieri,9,9780451208634,27.0
+35,Dragoes de Eter,Raphael Draccon,10,9788576860765,24.5
+36,Dom Quixote,Miguel de Cervantes,1,9780142437238,18.75
+37,As Cronicas de Narnia,C.S. Lewis,2,9780064401886,21.5
+38,1984,George Orwell,3,9780451524935,19.25
+39,Os Contos de Grimm,Joseph Jacobs,4,9780142437238,15.75
