@@ -21,7 +21,7 @@ engine = create_engine(
 try:
 
     # Tabela de clientes
-    df_clientes = pd.read_sql('clientes', con=engine)
+    df_clientes = pd.read_sql('tb_clientes', con=engine)
 
     # Tabela de pedidos
     df_pedidos = pd.read_sql('tb_pedidos', con=engine)
@@ -30,7 +30,7 @@ try:
     df_itens = pd.read_sql('tb_itens', con=engine)
 
     # Tabela de produtos
-    df_produtos = pd.read_sql('produtos', con=engine)
+    df_produtos = pd.read_sql('tb_produtos', con=engine)
 
 
     # =========================================================================
@@ -111,39 +111,54 @@ except Exception as e:
 
 
 
+# Mesmo com SQL
+query = """
+    -- Liste os pedidos feitos por clientes que moram em São Paulo.
+    SELECT 
+        tb_clientes.nome, 
+        tb_clientes.sobrenome, 
+        tb_pedidos.codigo_pedido, 
+        tb_pedidos.data_pedido,
+        tb_produtos.produto
 
-    # # =========================================================================
-    # Quando os nomes das colunas são diferentes é necessário informar o parâmetro left on e right_on
-    # df_merge1 = pd.merge(
-    #     df_clientes,
-    #     df_pedidos,
-    #     left_on='codigo_cliente',
-    #     right_on='cliente_codigo'
-    # )
+    FROM tb_pedidos
+
+    JOIN tb_clientes 
+        ON tb_pedidos.codigo_cliente = tb_clientes.codigo_cliente
+
+    JOIN tb_itens 
+        ON tb_itens.codigo_pedido = tb_pedidos.codigo_pedido
+
+    JOIN tb_produtos 
+        ON tb_itens.codigo_produto = tb_produtos.codigo_produto
+
+    WHERE tb_clientes.cidade = 'Sao Paulo' 
+       OR tb_clientes.cidade = 'Curitiba';
+"""
+
+df_dados = pd.read_sql_query(query, engine)
+
+print('\nDados')
+print(df_dados)
 
 
-    # # =========================================================================
-    # # MERGE 2
-    # # Junta pedidos com itens do pedido
-    # # usando:
-    # # tb_pedidos.codigo_pedido = tb_itens.pedido_codigo
-    # # =========================================================================
-    # df_merge2 = pd.merge(
-    #     df_merge1,
-    #     df_itens,
-    #     left_on='codigo_pedido',
-    #     right_on='pedido_codigo'
-    # )
 
 
-    # # =========================================================================
-    # # MERGE FINAL
-    # # Junta com a tabela de produtos
-    # # usando:
-    # # produtos.codigo_produto = tb_itens.codigo_produto
-    # # =========================================================================
-    # df_final = pd.merge(
-    #     df_merge2,
-    #     df_produtos,
-    #     on='codigo_produto'
-    # )
+# # =========================================================================
+# # Merge: Juntar dois dataframes
+# df_merge1 = pd.merge(
+#     df_clientes,
+#     df_pedido,
+#     on='codigo_produto'
+# )
+
+# # =========================================================================
+# Quando os nomes das colunas são diferentes é necessário informar o parâmetro left on e right_on
+# df_merge1 = pd.merge(
+#     df_clientes,
+#     df_pedidos,
+#     left_on='codigo_cliente',
+#     right_on='cliente_codigo'
+# )
+
+
