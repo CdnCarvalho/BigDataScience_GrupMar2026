@@ -16,7 +16,6 @@ try:
     df_recup_veiculo = df_ocorrencias[['cisp', 'recuperacao_veiculos']]
 
     # Totalizar
-    # df_recup_veiculo = df_recup_veiculo.groupby(['cisp']).sum(['recuperacao_veiculos']).reset_index()
     df_recup_veiculo = df_recup_veiculo.groupby(['cisp'], as_index=False)['recuperacao_veiculos'].sum()  # Versão mais nova do pandas
 
     print(df_recup_veiculo.head())
@@ -36,10 +35,10 @@ try:
     array_recup_veiculo = np.array(df_recup_veiculo['recuperacao_veiculos'])
 
     # Medidas de tendência central
+    total = np.sum(array_recup_veiculo)
     media = np.mean(array_recup_veiculo)
     mediana = np.median(array_recup_veiculo)
-    distancia_media_mediana = (media-mediana)/mediana
-
+    distancia_media_mediana = (media - mediana) / mediana * 100
 
 
     # Medidas de posição e dipersão - quartil
@@ -62,9 +61,9 @@ try:
 
     print('\nMedidas de Tendência Central')
     print(30*'-')
-    print(f'Média: {media}')
+    print(f'Média: {media:.2f}')
     print(f'Mediana: {mediana}')
-    print(f'Distância média da mediana: {distancia_media_mediana:.2f}')
+    print(f'Distância média da mediana: {distancia_media_mediana:.2f} %')
 
     print('\nMedidas de Posição e Dispersão')
     print(30*'-')
@@ -79,6 +78,23 @@ try:
 
 
 
+    # DPs QUE MENOS RECUPERARAM VEÍCULOS 
+    df_recup_veiculo_q1 = df_recup_veiculo[df_recup_veiculo['recuperacao_veiculos'] < q1]
+
+    print('\nDPs que menos recuperaram veículos:')
+    print(30*'-')
+    print(df_recup_veiculo_q1.sort_values(by='recuperacao_veiculos', ascending=True))
+
+
+    # DPs QUE MAIS RECUPERARAM VEÍCULOS 
+    df_recup_veiculo_q3 = df_recup_veiculo[df_recup_veiculo['recuperacao_veiculos'] > q3]
+
+    print('\nDPs que mais recuperaram veículos:')
+    print(30*'-')
+    print(df_recup_veiculo_q3.sort_values(by='recuperacao_veiculos', ascending=False))
+
+
+
     # OUTLIERS SUPERIORES 
     df_recup_veiculo_outliers_sup = df_recup_veiculo[df_recup_veiculo['recuperacao_veiculos'] > limite_superior].copy()
 
@@ -90,7 +106,6 @@ try:
         print(df_recup_veiculo_outliers_sup.sort_values(by='recuperacao_veiculos', ascending=False))
 
 
-
     # OUTLIERS INFERIORES
     df_recup_veiculo_outliers_inf = df_recup_veiculo[df_recup_veiculo['recuperacao_veiculos'] < limite_inferior].copy()
 
@@ -100,18 +115,35 @@ try:
         print('Não existem DPs com valores discrepantes inferiores')
     else:
         print(df_recup_veiculo_outliers_inf.sort_values(by='recuperacao_veiculos', ascending=True))
-
-   
-    # DPs QUE MENOS RECUPERARAM VEÍCULOS 
-    df_recup_veiculo_q1 = df_recup_veiculo[df_recup_veiculo['recuperacao_veiculos'] < q1]
-
-    print('\nDPs que menos recuperaram veículos:')
-    print(30*'-')
-    print(df_recup_veiculo_q1.sort_values(by='recuperacao_veiculos', ascending=True))
+ 
 
 except Exception as e:
     print(f'Erro ao descrever os dados: {e}')
     exit()
+
+
+# Calculando Percentuais
+try:
+    # ####### PORCENTAGENS ################
+    porcent90 = np.percentile(array_recup_veiculo, 90)
+    print(f'\n10% das DPs possuem recuperações acima de {porcent90:.2f}:')
+    print(30*'-')
+    df_recup_veiculo_porcent90 = df_recup_veiculo[df_recup_veiculo['recuperacao_veiculos'] > porcent90]
+    print(df_recup_veiculo_porcent90.sort_values(by='recuperacao_veiculos', ascending=False))
+
+
+    # QUANTO CADA OUTLIERS REPRESENTA DO TOTAL
+    df_recup_veiculo_outliers_sup['percentual_total'] = (
+        (df_recup_veiculo_outliers_sup['recuperacao_veiculos'] / total * 100)
+        .round(2)
+    )
+    
+    print('\nPercentuais dos Outliers Superiores em relação ao total:')
+    print(30*'-')
+    print(df_recup_veiculo_outliers_sup.sort_values(by='recuperacao_veiculos', ascending=False))
+
+except Exception as e:
+    print(f'Erro ao calcular percentuais {e}')
 
 
 # Medidas de Dispersão
@@ -134,7 +166,7 @@ try:
         # Distância <= |10%| : Baixa dispersão dos dados em relação a média
         # Distância > |10%| e distância < |25%|: Dispersão moderada dos dados em relação a média
         # Distâcia >= |25%|: Alta dispersão dos dados em relação a média
-    distancia_var_media = variancia / (media ** 2)
+    distancia_var_media = variancia / (media ** 2) * 100
 
     # Desvio padrão é a raiz quadrada da variância
     # Desvio padrão é a normalização da variância, por isso mais fácil de interpretar
@@ -143,17 +175,52 @@ try:
 
     # Coeficiente de variação
     # É a magnitude do desvio padrão em realção a média
-    coef_variacao = desvio_padrao / media
+    coef_variacao = desvio_padrao / media * 100
 
     print('\nMedidas de dispersão: ')
     print(30*'-')
-    print(f'Variância: {variancia}')
-    print(f'Dist. var x média: {distancia_var_media}')
-    print(f'Desvio padrão: {desvio_padrao}')
-    print(f'Coef. variação: {coef_variacao}')
+    print(f'Variância: {variancia:.2f}')
+    print(f'Dist. var x média: {distancia_var_media:.2f} %')
+    print(f'Desvio padrão: {desvio_padrao}:.2f')
+    print(f'Coef. variação: {coef_variacao:.2f} %')
 
 except Exception as e:
     print(f'Erro ao calcular as medidas de dispersão: {e}')
+    exit()
+
+
+# Medidas de distribuição
+try:
+    print('Calculando medidas de distribuição...')
+    # Assimetria (Skewness)
+    # Assimetria é uma medida que indica como os dados estão distribuídos em torno do valor central.
+    # Os valores estão equilibrados em torno do centro?  Existe uma quantidade maior de registros com valores menores ou maiores?
+    # O "peso" da distribuição está mais para os valores menores ou para os valores maiores?
+    
+    # Assimetria > 1.0 -  Assimetria positiva alta.  A cauda é longa à direita.  Existem alguns valores muito altos puxando a média para cima.
+    # Assimetria entre 0.5 e 1.0  Assimetria positiva moderada. A cauda à direita está presente, mas é menos acentuada.
+    # Assimetria entre -0.5 e 0.5  Distribuição aproximadamente simétrica.  A média e a mediana tendem a ter valores próximos.
+    # Assimetria entre -1.0 e -0.5  Assimetria negativa moderada.  A cauda à esquerda está presente, mas é menos acentuada.
+    # Assimetria < -1.0  Assimetria negativa alta. Existem alguns valores muito baixos puxando a média para baixo.
+    assimetria = df_recup_veiculo['recuperacao_veiculos'].skew()
+
+    # curtpse. Kurtosis (Cálculo de Fisher)
+    # é uma medida que descreve o formato da distribuição dos dados.  Nos ajuda a entender se os valores estão mais concentrados próximos da média 
+    # ou mais espalhados pela distribuição. Pode indicar a presença de valores extremos (outliers). 
+    # Quando a curtose é baixa, as observações podem estar mais distribuídos ao longo da distribuição.
+    
+    # Curtose ≈ 0 (mesocúrtica) Distribuição “normal”  Concentração moderada no centro # Poucos extremos relevantes
+    # Curtose > 0 (leptocúrtica)  # Pico mais alto  # Muitos valores próximos da média # Outliers mais fortes # Caudas mais “pesadas” 
+    # Curtose < 0 (platicúrtica)  # Pico achatado  # Dados mais espalhados # Poucos extremos # Distribuição mais uniforme
+    curtose = df_recup_veiculo['recuperacao_veiculos'].kurtosis()
+
+    print('\nMedidas de distribuição: ')
+    print(30*'-')
+    print(f'Assimetria: {assimetria}')
+    print(f'Curtose: {curtose}')
+
+except Exception as e:
+    print(f'Erro ao calcular as medidas de distribuição: {e}')
     exit()
 
 
@@ -162,20 +229,20 @@ except Exception as e:
 try:
     print('Visualizando os dados...')
 
-    plt.subplots(1,3, figsize=(18,6))
+    plt.subplots(2,2, figsize=(18,6))
     plt.suptitle('Análise da recuperação de veículos por DP (CISP)')
 
 
 
     # --- SUBPLOT 1: Boxplot com outliers
-    plt.subplot(1,3,1)
-    plt.boxplot(array_recup_veiculo, vert=False, showmeans=True)
+    plt.subplot(2, 2, 1)
+    plt.boxplot(array_recup_veiculo, orientation='horizontal', showmeans=True)
     plt.title('Boxplot com outliers')
 
 
 
     # --- SUBPLOT 2: DPs com maiores recuperações (outliers superiores)
-    plt.subplot(1,3,2)       
+    plt.subplot(2, 2, 2)       
     df_recup_veiculo_outliers_sup['cisp'] = (
         df_recup_veiculo_outliers_sup['cisp'].astype(str) # converter CISP para string
     )  
@@ -184,9 +251,22 @@ try:
     df_recup_veiculo_outliers_sup = (
         df_recup_veiculo_outliers_sup
         .sort_values(by='recuperacao_veiculos', ascending=True)
-)
+    )
+
     plt.barh(df_recup_veiculo_outliers_sup['cisp'], df_recup_veiculo_outliers_sup['recuperacao_veiculos'])
    
+    # RÓTULO DE DADOS
+    deslocamento = max(df_recup_veiculo_outliers_sup['recuperacao_veiculos']) * 0.005
+
+    for i, valor in enumerate(df_recup_veiculo_outliers_sup['recuperacao_veiculos']):
+        plt.text(
+            valor, 
+            i, 
+            f'{valor:,}', 
+            ha='left', 
+            fontsize=8
+        )
+
     # TOP 5
     # df_top5 = (
     #     df_recup_veiculo_outliers_sup
@@ -202,27 +282,46 @@ try:
 
 
     # --- SUBPLOT 3: Medidas descritivas
-    plt.subplot(1,3,3)
+    plt.subplot(2, 2, 3)
 
-    plt.text(0.05, 0.9, f'Média: {media}', fontsize=11)
-    plt.text(0.05, 0.8, f'Mediana: {mediana}', fontsize=11)
-    plt.text(0.05, 0.7, f'Distância: {distancia_media_mediana:.2f}', fontsize=11)
-    plt.text(0.05, 0.6, f'Mínimo: {minimo}', fontsize=11)
-    plt.text(0.05, 0.5, f'Q1: {q1}', fontsize=11)
-    plt.text(0.05, 0.4, f'Q3: {q3}', fontsize=11)
-    plt.text(0.05, 0.3, f'IQR: {iqr}', fontsize=11)
-    plt.text(0.05, 0.2, f'Máximo: {maximo}', fontsize=11)
-    plt.text(0.05, 0.1, f'Amplitude: {amplitude_total}', fontsize=11)
+    plt.text(0.05, 0.9, f'Média: {media:.2f}', fontsize=9)
+    plt.text(0.05, 0.8, f'Mediana: {mediana}', fontsize=9)
+    plt.text(0.05, 0.7, f'Distância: {distancia_media_mediana:.2f} %', fontsize=9)
+    plt.text(0.05, 0.6, f'Mínimo: {minimo}', fontsize=9)
+    plt.text(0.05, 0.5, f'Q1: {q1}', fontsize=9)
+    plt.text(0.05, 0.4, f'Q3: {q3}', fontsize=9)
+    plt.text(0.05, 0.3, f'IQR: {iqr}', fontsize=9)
+    plt.text(0.05, 0.2, f'Máximo: {maximo}', fontsize=9)
+    plt.text(0.05, 0.1, f'Amplitude: {amplitude_total}', fontsize=9)
 
     # Desvio padrão, distância, coeficiente de variação e variância
-    plt.text(0.6, 0.9, f'Desvio Padrão: {desvio_padrao}', fontsize=12)
-    plt.text(0.6, 0.8, f'Variância: {variancia}', fontsize=12)
-    plt.text(0.6, 0.7, f'Coeficiente de Variação: {coef_variacao}', fontsize=12)
-    plt.text(0.6, 0.6, f'Dist. Var x Média: {distancia_var_media}', fontsize=12)
+    plt.text(0.6, 0.9, f'Desvio Padrão: {desvio_padrao:.2f}', fontsize=9)
+    plt.text(0.6, 0.8, f'Variância: {variancia:.2f}', fontsize=9)
+    plt.text(0.6, 0.7, f'Coeficiente de Variação: {coef_variacao:.2f} %', fontsize=9)
+    plt.text(0.6, 0.6, f'Dist. Var x Média: {distancia_var_media:.2f} %', fontsize=9)
+    plt.text(0.6, 0.5, f'Assimetria: {assimetria:.2f}', fontsize=9)
+    plt.text(0.6, 0.4, f'Curtose: {curtose:.2f}', fontsize=9)
+
 
     # Medidas de dispersão
 
     plt.axis('off')
+
+
+    plt.subplot(2, 2, 4)
+    plt.hist(array_recup_veiculo, bins=165, edgecolor='black')  # < Q3 na primeira
+
+    contagens, limites = np.histogram(array_recup_veiculo, bins=165)  # < Q3 na primeira
+    
+    print('\nFaixas do Histograma:')
+
+    for i in range(len(contagens)):
+       if contagens[i] > 0:
+          print(
+              f'Faixa {i+1}'
+              f'{limites[i]:.0f} até {limites[i+1]:.0f} roubos'
+              f' => {contagens[i]} municípios'
+           )
 
     plt.tight_layout()
     plt.show()

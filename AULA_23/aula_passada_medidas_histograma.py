@@ -52,6 +52,8 @@ try:
     # Faz parte da biblioteca numpy
     array_roubo_veiculo = np.array(df_roubo_veiculo['roubo_veiculo'])
 
+    total = np.sum(array_roubo_veiculo)
+
     # média de roubo_veiculo
     media_roubo_veiculo = np.mean(array_roubo_veiculo)
 
@@ -60,7 +62,7 @@ try:
     mediana_roubo_veiculo = np.median(array_roubo_veiculo)
 
     # distânicia
-    distancia = abs((media_roubo_veiculo - mediana_roubo_veiculo) / mediana_roubo_veiculo)
+    distancia = abs((media_roubo_veiculo - mediana_roubo_veiculo) / mediana_roubo_veiculo) * 100
 
     # Medidas de tendência central
     # Se a média for muito diferente da mediana, distribuição é assimétrica. Não tende a haver um padrão
@@ -70,9 +72,9 @@ try:
     # A distribuição não tende a um padrão.
     print('\nMedidas de tendência central: ')
     print(30*'-')
-    print(f'Média de roubo de veículos: {media_roubo_veiculo}')
+    print(f'Média de roubo de veículos: {media_roubo_veiculo:.2f}')
     print(f'Mediana de roubo de veículos: {mediana_roubo_veiculo}')
-    print(f'Distância entre média e mediana: {distancia}')
+    print(f'Distância entre média e mediana: {distancia:.2f}')
 
 
     # Quartis
@@ -208,7 +210,7 @@ try:
         # Distância <= |10%| : Baixa dispersão dos dados em relação a média
         # Distância > |10%| e distância < |25%|: Dispersão moderada dos dados em relação a média
         # Distâcia >= |25%|: Alta dispersão dos dados em relação a média
-    distancia_var_media = variancia / (media_roubo_veiculo ** 2)
+    distancia_var_media = variancia / (media_roubo_veiculo ** 2) * 100
 
     # Desvio padrão é a raiz quadrada da variância
     # Desvio padrão é a normalização da variância, por isso mais fácil de interpretar
@@ -217,14 +219,14 @@ try:
 
     # Coeficiente de variação
     # É a magnitude do desvio padrão em realção a média
-    coef_variacao = desvio_padrao / media_roubo_veiculo
+    coef_variacao = desvio_padrao / media_roubo_veiculo * 100
 
     print('\nMedidas de dispersão: ')
     print(30*'-')
-    print(f'Variância: {variancia}')
-    print(f'Dist. var x média: {distancia_var_media}')
-    print(f'Desvio padrão: {desvio_padrao}')
-    print(f'Coef. variação: {coef_variacao}')
+    print(f'Variância: {variancia:.2f}')
+    print(f'Dist. var x média: {distancia_var_media:.2f}')
+    print(f'Desvio padrão: {desvio_padrao:.2f}')
+    print(f'Coef. variação: {coef_variacao:.2f}')
 
 except Exception as e:
     print(f'Erro ao calcular as medidas de dispersão: {e}')
@@ -317,6 +319,30 @@ except Exception as e:
     exit()
 
 
+# Calculando Percentuais
+try:
+    # ####### PORCENTAGENS ################
+    porcent90 = np.percentile(array_roubo_veiculo, 90)
+    print(f'\n10% dos Municípios possuem obtiveram roubos acima de {porcent90:.2f}:')
+    print(30*'-')
+    df_recup_veiculo_porcent90 = df_roubo_veiculo[df_roubo_veiculo['roubo_veiculo'] > porcent90]
+    print(df_recup_veiculo_porcent90.sort_values(by='roubo_veiculo', ascending=False))
+
+
+    # QUANTO CADA OUTLIERS REPRESENTA DO TOTAL
+    df_roubo_veiculo_outliers_superiores['percentual_total'] = (
+        (df_roubo_veiculo_outliers_superiores['roubo_veiculo'] / total * 100)
+        .round(2)
+    )
+    
+    print('\nPercentuais dos Outliers Superiores em relação ao total:')
+    print(30*'-')
+    print(df_roubo_veiculo_outliers_superiores.sort_values(by='roubo_veiculo', ascending=False))
+
+except Exception as e:
+    print(f'Erro ao calcular percentuais {e}')
+
+
 
 # visualizar os dados
 try:
@@ -393,7 +419,7 @@ try:
     plt.subplot(2, 2, 3)
 
     # showfliers=False - remove os outliers
-    plt.boxplot(array_roubo_veiculo, vert=False, showmeans=True)
+    plt.boxplot(array_roubo_veiculo, orientation='horizontal', showmeans=True)
 
     plt.title('Boxplot dos Roubos de Veículos')
 
@@ -403,22 +429,22 @@ try:
     # ===================================================
     plt.subplot(2, 2, 4)
 
-    plt.text(0.1, 0.9, f'Média: {media_roubo_veiculo}', fontsize=10)
-    plt.text(0.1, 0.8, f'Mediana: {mediana_roubo_veiculo}', fontsize=10)
-    plt.text(0.1, 0.7, f'Distância: {distancia}', fontsize=10)
-    plt.text(0.1, 0.6, f'Menor valor: {minimo}', fontsize=10)
-    plt.text(0.1, 0.5, f'Limite inferior: {limite_inferior}', fontsize=10)
-    plt.text(0.1, 0.4, f'Q1: {q1}', fontsize=10)
-    plt.text(0.1, 0.3, f'Q3: {q3}', fontsize=10)
-    plt.text(0.1, 0.2, f'Limite superior: {limite_superior}', fontsize=10)
-    plt.text(0.1, 0.1, f'Maior valor: {maximo}', fontsize=10)
-    plt.text(0.1, 0.0, f'Amplitude Total: {amplitude}', fontsize=10)
+    plt.text(0.1, 0.9, f'Média: {media_roubo_veiculo:.2f}', fontsize=9)
+    plt.text(0.1, 0.8, f'Mediana: {mediana_roubo_veiculo}', fontsize=9)
+    plt.text(0.1, 0.7, f'Distância: {distancia:.2f} %', fontsize=9)
+    plt.text(0.1, 0.6, f'Menor valor: {minimo}', fontsize=9)
+    plt.text(0.1, 0.5, f'Limite inferior: {limite_inferior}', fontsize=9)
+    plt.text(0.1, 0.4, f'Q1: {q1}', fontsize=9)
+    plt.text(0.1, 0.3, f'Q3: {q3}', fontsize=9)
+    plt.text(0.1, 0.2, f'Limite superior: {limite_superior}', fontsize=9)
+    plt.text(0.1, 0.1, f'Maior valor: {maximo}', fontsize=9)
+    plt.text(0.1, 0.0, f'Amplitude Total: {amplitude}', fontsize=9)
 
-    plt.text(0.6, 0.9, f'Assimetria: {assimetria}', fontsize=10)
-    plt.text(0.6, 0.8, f'Curtose: {curtose}', fontsize=10)
-    plt.text(0.6, 0.7, f'Variancia: {variancia}', fontsize=10)
-    plt.text(0.6, 0.6, f'Desvio Padrão: {desvio_padrao}', fontsize=10)
-    plt.text(0.6, 0.5, f'Coeficiente de Variação: {coef_variacao}', fontsize=10)
+    plt.text(0.6, 0.9, f'Assimetria: {assimetria:.2f}', fontsize=9)
+    plt.text(0.6, 0.8, f'Curtose: {curtose:.2f}', fontsize=9)
+    plt.text(0.6, 0.7, f'Variancia: {variancia:.2f}', fontsize=9)
+    plt.text(0.6, 0.6, f'Desvio Padrão: {desvio_padrao:.2f}', fontsize=9)
+    plt.text(0.6, 0.5, f'Coeficiente de Variação: {coef_variacao:.2f} %', fontsize=9)
 
     plt.axis('off')
     plt.title('Resumo Estatístico')

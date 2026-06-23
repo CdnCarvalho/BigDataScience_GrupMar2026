@@ -37,6 +37,7 @@ try:
     array_recup_veiculo = np.array(df_recup_veiculo['recuperacao_veiculos'])
 
     # Medidas de tendência central
+    total = np.sum(array_recup_veiculo)
     media = np.mean(array_recup_veiculo)
     mediana = np.median(array_recup_veiculo)
     distancia_media_mediana = (media - mediana) / mediana * 100
@@ -90,15 +91,15 @@ try:
 
     print('\nDPs que menos recuperaram veículos:')
     print(30*'-')
-    print(df_recup_veiculo_q3.sort_values(by='recuperacao_veiculos', ascending=True))
+    print(df_recup_veiculo_q3.sort_values(by='recuperacao_veiculos', ascending=False))
 
 
-    # PORCENTAGENS
-    porcent90 = np.percentile(array_recup_veiculo, 90)
-    print(f'\n10% dos Muncicípios possuem recuperações acima de {porcent90:.2f}:')
-    print(30*'-')
-    df_recup_veiculo_porcent90 = df_recup_veiculo[df_recup_veiculo['recuperacao_veiculos'] > porcent90]
-    print(df_recup_veiculo_porcent90.sort_values(by='recuperacao_veiculos', ascending=False))
+    # # PORCENTAGENS
+    # porcent90 = np.percentile(array_recup_veiculo, 90)
+    # print(f'\n10% dos Muncicípios possuem recuperações acima de {porcent90:.2f}:')
+    # print(30*'-')
+    # df_recup_veiculo_porcent90 = df_recup_veiculo[df_recup_veiculo['recuperacao_veiculos'] > porcent90]
+    # print(df_recup_veiculo_porcent90.sort_values(by='recuperacao_veiculos', ascending=False))
 
 
 
@@ -113,7 +114,6 @@ try:
         print(df_recup_veiculo_outliers_sup.sort_values(by='recuperacao_veiculos', ascending=False))
 
 
-
     # OUTLIERS INFERIORES
     df_recup_veiculo_outliers_inf = df_recup_veiculo[df_recup_veiculo['recuperacao_veiculos'] < limite_inferior].copy()
 
@@ -124,11 +124,34 @@ try:
     else:
         print(df_recup_veiculo_outliers_inf.sort_values(by='recuperacao_veiculos', ascending=True))
 
-   
-
 except Exception as e:
     print(f'Erro ao descrever os dados: {e}')
     exit()
+
+
+# Calculando Percentuais
+try:
+    # ####### PORCENTAGENS ################
+    porcent90 = np.percentile(array_recup_veiculo, 90)
+    print(f'\n10% das DPs possuem recuperações acima de {porcent90:.2f}:')
+    print(30*'-')
+    df_recup_veiculo_porcent90 = df_recup_veiculo[df_recup_veiculo['recuperacao_veiculos'] > porcent90]
+    print(df_recup_veiculo_porcent90.sort_values(by='recuperacao_veiculos', ascending=False))
+
+
+    # QUANTO CADA OUTLIERS REPRESENTA DO TOTAL
+    df_recup_veiculo_outliers_sup['percentual_total'] = (
+        (df_recup_veiculo_outliers_sup['recuperacao_veiculos'] / total * 100)
+        .round(2)
+    )
+    
+    print('\nPercentuais dos Outliers Superiores em relação ao total:')
+    print(30*'-')
+    print(df_recup_veiculo_outliers_sup.sort_values(by='recuperacao_veiculos', ascending=False))
+
+except Exception as e:
+    print(f'Erro ao calcular percentuais {e}')
+
 
 
 # Medidas de Dispersão
@@ -220,7 +243,7 @@ try:
 
     # --- SUBPLOT 1: Boxplot com outliers
     plt.subplot(2, 2, 1)
-    plt.boxplot(array_recup_veiculo, orientation='vertical', showmeans=True)
+    plt.boxplot(array_recup_veiculo, orientation='horizontal', showmeans=True)
     plt.title('Boxplot com outliers')
 
 
@@ -236,6 +259,20 @@ try:
         .sort_values(by='recuperacao_veiculos', ascending=True)
 )
     plt.barh(df_recup_veiculo_outliers_sup['munic'], df_recup_veiculo_outliers_sup['recuperacao_veiculos'])
+
+    
+    # RÓTULO DE DADOS
+    deslocamento = max(df_recup_veiculo_outliers_sup['recuperacao_veiculos']) * 0.005
+
+    for i, valor in enumerate(df_recup_veiculo_outliers_sup['recuperacao_veiculos']):
+        plt.text(
+            valor, 
+            i, 
+            f'{valor:,}', 
+            ha='left', 
+            fontsize=8
+        )
+
    
     # TOP 5
     # df_top5 = (
