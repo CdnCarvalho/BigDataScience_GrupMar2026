@@ -1,0 +1,58 @@
+Total Roubo Veiculos = SUM(roubos_veiculos[roubo_veiculo])
+
+Media Roubo Veiculos = AVERAGE(roubos_veiculos[roubo_veiculo])
+
+
+### total flag mais
+Roubo Veiculo Mais = CALCULATE(
+    SUM(roubos_veiculos[roubo_veiculo]),
+    roubos_veiculos[flag] = "mais"
+)
+
+
+### total flag menos
+Roubo Veiculo Menos = CALCULATE(
+    SUM(roubos_veiculos[roubo_veiculo]),
+    roubos_veiculos[flag] = "menos"
+)
+
+
+### total flag mais e baixada fluminense
+Roubo Veículos Baixada Fluminense (mais) = CALCULATE(
+    SUM(roubos_veiculos[roubo_veiculo]),
+    roubos_veiculos[flag] = "mais",
+    roubos_veiculos[regiao] = "Baixada Fluminense"
+)
+
+
+### total flag mais e interior
+Total Roubo Veículo Interior (menos) = CALCULATE(
+    SUM(roubos_veiculos[roubo_veiculo]),
+    roubos_veiculos[flag] = "MENOS",
+    roubos_veiculos[regiao] = "interior"
+)
+
+
+### média flag mais e baixada fluminense
+Media Roubo Veiculos Baixada Fluminense (menos) = CALCULATE(
+    AVERAGE(roubos_veiculos[roubo_veiculo]),
+    roubos_veiculos[flag] = "mais",
+    roubos_veiculos[regiao] = "Baixada Fluminense"
+)
+
+
+### média flag menos e interior
+Media Roubo Veículo Interior (menos) = CALCULATE(
+    AVERAGE(roubos_veiculos[roubo_veiculo]),
+    roubos_veiculos[flag] = "MENOS",
+    roubos_veiculos[regiao] = "interior"
+)
+
+
+
+
+
+
+
+
+
